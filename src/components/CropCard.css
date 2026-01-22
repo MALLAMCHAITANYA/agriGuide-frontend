@@ -1,0 +1,103 @@
+.crop-card {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.crop-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.crop-img {
+  width: 100%;
+  height: 200px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 12px;
+}
+
+.rank-badge {
+  background: #f59e0b;
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 20px;
+  padding: 6px 14px;
+  margin: 0 auto 12px;
+  width: fit-content;
+  font-size: 0.85rem;
+  display: block;
+  text-align: center;
+}
+
+.crop-title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 12px 0 8px;
+  font-weight: 700;
+  color: #065f46;
+}
+
+.confidence {
+  color: #16a34a;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.crop-info {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.crop-info p {
+  margin: 4px 0;
+  color: #374151;
+}
+
+.crop-info span {
+  font-weight: 600;
+  color: #065f46;
+  display: inline-block;
+  min-width: 110px;
+}
+
+.action-buttons {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.action-buttons button {
+  flex: 1;
+  background: #16a34a;
+  color: white;
+  border-radius: 6px;
+  border: none;
+  padding: 10px 12px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-buttons button:hover {
+  background: #22c55e;
+  transform: translateY(-2px);
+}
+
+.action-buttons button:active {
+  transform: translateY(0);
+}
