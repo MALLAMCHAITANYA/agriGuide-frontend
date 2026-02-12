@@ -1,26 +1,28 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "./LandingPage.css";
 
 function LandingPage() {
   const navigate = useNavigate();
   const [hoveredFeature, setHoveredFeature] = useState(null);
+  const { t } = useTranslation();
 
   const features = [
     {
       icon: "🌾",
-      title: "Smart Recommendations",
-      description: "AI-powered analysis for optimal crop selection"
+      title: t("landing.featureSmartTitle"),
+      description: t("landing.featureSmartDesc")
     },
     {
       icon: "📊",
-      title: "Data-Driven Insights",
-      description: "Real-time soil and climate analysis"
+      title: t("landing.featureDataTitle"),
+      description: t("landing.featureDataDesc")
     },
     {
       icon: "🌱",
-      title: "Sustainable Growth",
-      description: "Maximize yield while protecting the environment"
+      title: t("landing.featureSustainTitle"),
+      description: t("landing.featureSustainDesc")
     }
   ];
 
@@ -39,20 +41,20 @@ function LandingPage() {
           {/* Badge */}
           <div className="ai-tag">
             <span className="ai-tag-icon">✨</span>
-            <span className="ai-tag-text">Next-Gen Agricultural AI</span>
+            <span className="ai-tag-text">{t("landing.badge")}</span>
           </div>
 
           {/* Main Headline */}
           <h1 className="landing-headline">
-            Grow Smarter,
-            <span className="headline-gradient"> Harvest Better</span>
+            {t("landing.headlineMain")}
+            <span className="headline-gradient">
+              {t("landing.headlineAccent")}
+            </span>
           </h1>
 
           {/* Description */}
           <p className="landing-description">
-            Unlock the power of artificial intelligence to make informed crop decisions. 
-            Our platform analyzes soil conditions, climate data, and agricultural patterns 
-            to deliver personalized recommendations for maximum yield and sustainability.
+            {t("landing.description")}
           </p>
 
           {/* CTA Buttons */}
@@ -61,14 +63,14 @@ function LandingPage() {
               className="cta-primary" 
               onClick={() => navigate("/crop-recommender")}
             >
-              <span>Get Started</span>
+              <span>{t("landing.ctaPrimary")}</span>
               <span className="button-arrow">→</span>
             </button>
           </div>
 
           {/* Scroll Indicator */}
           <div className="scroll-indicator">
-            <span className="scroll-text">Discover more</span>
+            <span className="scroll-text">{t("landing.scrollMore")}</span>
             <span className="scroll-arrow">↓</span>
           </div>
         </div>
@@ -76,7 +78,7 @@ function LandingPage() {
 
       {/* Features Section */}
       <div className="features-section">
-        <h2 className="features-title">Why Choose Our Platform</h2>
+        <h2 className="features-title">{t("landing.featuresTitle")}</h2>
         <div className="features-grid">
           {features.map((feature, index) => (
             <div 
@@ -100,13 +102,13 @@ function LandingPage() {
 
       {/* CTA Section */}
       <div className="final-cta-section">
-        <h2>Ready to Transform Your Farming?</h2>
-        <p>Join thousands of farmers making smarter decisions with AI</p>
+        <h2>{t("landing.finalCtaTitle")}</h2>
+        <p>{t("landing.finalCtaText")}</p>
         <button 
           className="cta-large"
           onClick={() => navigate("/crop-recommender")}
         >
-          Start Your Journey Now
+          {t("landing.finalCtaButton")}
         </button>
       </div>
     </div>

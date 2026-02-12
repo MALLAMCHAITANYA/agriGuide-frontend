@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "./CropRecommender.css";
 import Swal from "sweetalert2";
 import ClipLoader from "react-spinners/ClipLoader";
 
 function CropRecommender() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [values, setValues] = useState({
     N: "",
@@ -27,7 +29,11 @@ function CropRecommender() {
 
   const handleSubmit = async () => {
     if (Object.values(values).some((v) => v === "")) {
-      Swal.fire("Missing Values", "Please fill all fields!", "warning");
+      Swal.fire(
+        t("recommender.alertMissingTitle"),
+        t("recommender.alertMissingText"),
+        "warning"
+      );
       return;
     }
 
@@ -57,7 +63,11 @@ function CropRecommender() {
         },
       });
     } catch {
-      Swal.fire("Error", "Backend not responding!", "error");
+      Swal.fire(
+        t("recommender.alertErrorTitle"),
+        t("recommender.alertErrorText"),
+        "error"
+      );
     }
 
     setLoading(false);
@@ -75,49 +85,51 @@ function CropRecommender() {
     <div className="crop-recommender-page" style={backgroundStyle}>
       <div className="recommender-container">
         <div className="recommender-header">
-          <h1 className="recommender-title">🌾 Crop Recommendation</h1>
+          <h1 className="recommender-title">{t("recommender.title")}</h1>
           <p className="recommender-subtitle">
-            Enter your soil and climate data to get AI-powered crop recommendations
+            {t("recommender.subtitle")}
           </p>
         </div>
 
         <div className="recommender-card">
-          <h2 className="form-section-title">Enter Your Data</h2>
+          <h2 className="form-section-title">
+            {t("recommender.sectionTitle")}
+          </h2>
           <p className="form-section-subtitle">
-            Provide soil and climate information to get personalized crop recommendations
+            {t("recommender.sectionSubtitle")}
           </p>
 
           <div className="form-grid">
             <input
               type="text"
-              placeholder="🌆 City"
+              placeholder={t("recommender.cityPlaceholder")}
               value={city}
               onChange={(e) => setCity(e.target.value)}
             />
 
-            <input type="number" name="N" placeholder="🌿 Nitrogen (N)" value={values.N} onChange={handleChange} />
-            <input type="number" name="P" placeholder="🧪 Phosphorus (P)" value={values.P} onChange={handleChange} />
-            <input type="number" name="K" placeholder="🧂 Potassium (K)" value={values.K} onChange={handleChange} />
+            <input type="number" name="N" placeholder={t("recommender.nPlaceholder")} value={values.N} onChange={handleChange} />
+            <input type="number" name="P" placeholder={t("recommender.pPlaceholder")} value={values.P} onChange={handleChange} />
+            <input type="number" name="K" placeholder={t("recommender.kPlaceholder")} value={values.K} onChange={handleChange} />
 
-            <input type="number" name="temperature" placeholder="🌡 Temperature (°C)" value={values.temperature} onChange={handleChange} />
-            <input type="number" name="humidity" placeholder="💧 Humidity (%)" value={values.humidity} onChange={handleChange} />
+            <input type="number" name="temperature" placeholder={t("recommender.tempPlaceholder")} value={values.temperature} onChange={handleChange} />
+            <input type="number" name="humidity" placeholder={t("recommender.humidityPlaceholder")} value={values.humidity} onChange={handleChange} />
 
-            <input type="number" name="ph" placeholder="⚗️ pH Value" value={values.ph} onChange={handleChange} />
-            <input type="number" name="rainfall" placeholder="🌧 Rainfall (mm)" value={values.rainfall} onChange={handleChange} />
+            <input type="number" name="ph" placeholder={t("recommender.phPlaceholder")} value={values.ph} onChange={handleChange} />
+            <input type="number" name="rainfall" placeholder={t("recommender.rainfallPlaceholder")} value={values.rainfall} onChange={handleChange} />
 
             <select
               value={season}
               onChange={(e) => setSeason(e.target.value)}
             >
-              <option value="">🌦 Season (optional)</option>
-              <option value="kharif">Kharif (Monsoon)</option>
-              <option value="rabi">Rabi (Winter)</option>
-              <option value="all">All seasons</option>
+              <option value="">{t("recommender.seasonLabel")}</option>
+              <option value="kharif">{t("recommender.seasonKharif")}</option>
+              <option value="rabi">{t("recommender.seasonRabi")}</option>
+              <option value="all">{t("recommender.seasonAll")}</option>
             </select>
           </div>
 
           <button className="predict-btn" onClick={handleSubmit} disabled={loading}>
-            {loading ? <ClipLoader size={20} /> : "🌱 Predict Best Crops"}
+            {loading ? <ClipLoader size={20} /> : t("recommender.predictButton")}
           </button>
         </div>
       </div>

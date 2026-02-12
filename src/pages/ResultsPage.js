@@ -3,11 +3,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CropCard from "../components/CropCard";
 import MarketPrice from "../components/MarketPrice";
 import cropData from "../data/cropData";
+import { useTranslation } from "react-i18next";
 import "./ResultsPage.css";
 
 function ResultsPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const recommendations = location.state?.recommendations || [];
   const selectedSeason = location.state?.selectedSeason || "";
@@ -91,12 +93,14 @@ function ResultsPage() {
     return (
       <div className="results-page" style={backgroundStyle}>
         <div className="empty-results-container">
-          <h2 className="empty-results-title">⚠️ Please Enter Details First</h2>
+          <h2 className="empty-results-title">
+            {t("results.emptyTitle")}
+          </h2>
           <p className="empty-results-message">
-            You need to fill in the crop prediction form on the Home page to see results.
+            {t("results.emptyMessage")}
           </p>
           <button className="back-btn" onClick={() => navigate("/")}>
-            ⬅ Go to Home Page
+            {t("results.backHome")}
           </button>
         </div>
       </div>
@@ -105,30 +109,30 @@ function ResultsPage() {
 
   return (
     <div className="results-page" style={backgroundStyle}>
-      <h1 className="results-title">🌾 Top Recommended Crops</h1>
+      <h1 className="results-title">{t("results.title")}</h1>
       <div className="filters-row">
         {selectedSeason && (
           <div className="season-chip">
-            Season:&nbsp;
+            {t("results.seasonLabel")}&nbsp;
             <span className="season-chip-value">
               {selectedSeason === "kharif"
-                ? "Kharif (Monsoon)"
+                ? t("results.seasonKharif")
                 : selectedSeason === "rabi"
-                ? "Rabi (Winter)"
-                : "All seasons"}
+                ? t("results.seasonRabi")
+                : t("results.seasonAll")}
             </span>
           </div>
         )}
 
         {availableRegions.length > 0 && (
           <div className="region-filter">
-            <span className="region-label">Region:</span>
+            <span className="region-label">{t("results.regionLabel")}</span>
             <select
               className="region-select"
               value={selectedRegion}
               onChange={(e) => setSelectedRegion(e.target.value)}
             >
-              <option value="">All top states</option>
+              <option value="">{t("results.regionAllStates")}</option>
               {availableRegions.map((state) => (
                 <option key={state} value={state}>
                   {state}
@@ -155,14 +159,18 @@ function ResultsPage() {
       {/* 🔍 Comparison Section */}
       {comparisonData.length > 0 && (
         <div className="comparison-section">
-          <h2 className="comparison-title">Compare Recommended Crops</h2>
+          <h2 className="comparison-title">
+            {t("results.comparisonTitle")}
+          </h2>
           <p className="comparison-subtitle">
-            Quickly see how each recommended crop differs in cost, water need, duration, and season so you can pick the one that fits your farm best.
+            {t("results.comparisonSubtitle")}
           </p>
 
           <div className="comparison-table">
             <div className="comparison-row comparison-row-header">
-              <div className="comparison-cell label-cell">Factor</div>
+              <div className="comparison-cell label-cell">
+                {/* "Factor" is more technical; we keep it implicit */}
+              </div>
               {comparisonData.map((item) => (
                 <div key={item.key} className="comparison-cell crop-name-cell">
                   <span className="comparison-crop-name">
@@ -176,11 +184,11 @@ function ResultsPage() {
             </div>
 
             {[
-              { label: "Duration", key: "duration" },
-              { label: "Water Need", key: "water" },
-              { label: "Cost / Acre", key: "cost" },
-              { label: "Best Season", key: "season" },
-              { label: "Top States", key: "top_states" },
+              { label: t("results.factor.duration"), key: "duration" },
+              { label: t("results.factor.water"), key: "water" },
+              { label: t("results.factor.cost"), key: "cost" },
+              { label: t("results.factor.season"), key: "season" },
+              { label: t("results.factor.topStates"), key: "top_states" },
             ].map((row) => (
               <div className="comparison-row" key={row.label}>
                 <div className="comparison-cell label-cell">

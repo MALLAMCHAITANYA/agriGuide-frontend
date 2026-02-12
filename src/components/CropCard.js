@@ -3,11 +3,13 @@ import "./CropCard.css";
 import cropData from "../data/cropData";
 import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
+import { useTranslation } from "react-i18next";
 
 function CropCard({ crop, rank, confidence }) {
   const cropInfo = cropData[crop];
   const cardRef = useRef(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const { t } = useTranslation();
   let currentSpeech = null;
 
   if (!cropInfo) {
@@ -112,7 +114,9 @@ function CropCard({ crop, rank, confidence }) {
       <h2 className="crop-title">{crop.toUpperCase()}</h2>
 
       {/* 📊 Confidence */}
-      <p className="confidence">Confidence: {confidence}%</p>
+      <p className="confidence">
+        {t("cropCard.confidenceLabel")}: {confidence}%
+      </p>
       <div className="confidence-bar-container">
         <div className="confidence-bar-bg">
           <div
@@ -123,7 +127,7 @@ function CropCard({ crop, rank, confidence }) {
           />
         </div>
         <span className="confidence-bar-label">
-          Higher bar = better match for your soil &amp; climate
+          {t("cropCard.confidenceHint")}
         </span>
       </div>
 
