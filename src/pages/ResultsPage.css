@@ -27,12 +27,63 @@
 
 .results-title {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 8px;
   font-size: 2rem;
   font-weight: 700;
   color: #ffffff;
   letter-spacing: -0.3px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.filters-row {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.season-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.15);
+  color: #e0f2f1;
+  font-size: 0.85rem;
+}
+
+.season-chip-value {
+  font-weight: 600;
+}
+
+.region-filter {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.region-label {
+  font-size: 0.85rem;
+  color: #e0f2f1;
+}
+
+.region-select {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(209, 250, 229, 0.7);
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 0.85rem;
+  color: #065f46;
+  outline: none;
+}
+
+.region-select:focus {
+  box-shadow: 0 0 0 2px rgba(167, 243, 208, 0.8);
 }
 
 /* Clean Simple Grid */
@@ -49,6 +100,87 @@
 .grid-item {
   display: flex;
   justify-content: center;
+}
+
+/* 🔍 Comparison Section */
+.comparison-section {
+  margin: 40px auto 0;
+  width: 100%;
+  max-width: 1200px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 24px 24px 28px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.comparison-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #065f46;
+  margin-bottom: 4px;
+  text-align: left;
+}
+
+.comparison-subtitle {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 18px;
+}
+
+.comparison-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.comparison-row {
+  display: grid;
+  grid-template-columns: 1.1fr repeat(3, 1fr);
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.comparison-row:last-child {
+  border-bottom: none;
+}
+
+.comparison-row-header {
+  border-bottom: 2px solid #d1d5db;
+  font-weight: 600;
+}
+
+.comparison-cell {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.label-cell {
+  font-weight: 600;
+  color: #065f46;
+}
+
+.crop-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.comparison-crop-name {
+  font-weight: 600;
+}
+
+.comparison-rank-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: #ecfdf3;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
 }
 
 /* Empty Results Container */
@@ -118,4 +250,10 @@
   .results-title {
     font-size: 1.75rem;
   }
+}
+/* Market Price Wrapper */
+.market-price-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 40px auto 20px;
 }

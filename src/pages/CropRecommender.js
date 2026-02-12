@@ -18,6 +18,7 @@ function CropRecommender() {
   });
 
   const [city, setCity] = useState("");
+  const [season, setSeason] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -50,7 +51,10 @@ function CropRecommender() {
       const data = await response.json();
 
       navigate("/results", {
-        state: { recommendations: data.recommendations },
+        state: {
+          recommendations: data.recommendations,
+          selectedSeason: season,
+        },
       });
     } catch {
       Swal.fire("Error", "Backend not responding!", "error");
@@ -100,6 +104,16 @@ function CropRecommender() {
 
             <input type="number" name="ph" placeholder="⚗️ pH Value" value={values.ph} onChange={handleChange} />
             <input type="number" name="rainfall" placeholder="🌧 Rainfall (mm)" value={values.rainfall} onChange={handleChange} />
+
+            <select
+              value={season}
+              onChange={(e) => setSeason(e.target.value)}
+            >
+              <option value="">🌦 Season (optional)</option>
+              <option value="kharif">Kharif (Monsoon)</option>
+              <option value="rabi">Rabi (Winter)</option>
+              <option value="all">All seasons</option>
+            </select>
           </div>
 
           <button className="predict-btn" onClick={handleSubmit} disabled={loading}>

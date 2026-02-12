@@ -113,6 +113,19 @@ function CropCard({ crop, rank, confidence }) {
 
       {/* 📊 Confidence */}
       <p className="confidence">Confidence: {confidence}%</p>
+      <div className="confidence-bar-container">
+        <div className="confidence-bar-bg">
+          <div
+            className="confidence-bar-fill"
+            style={{
+              width: `${Math.min(100, Math.max(0, Number(confidence)))}%`,
+            }}
+          />
+        </div>
+        <span className="confidence-bar-label">
+          Higher bar = better match for your soil &amp; climate
+        </span>
+      </div>
 
       {/* 📋 Crop Details */}
       <div className="crop-info">

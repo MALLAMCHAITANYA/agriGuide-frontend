@@ -49,7 +49,33 @@
   font-weight: 600;
   font-size: 1rem;
   text-align: center;
+  margin-bottom: 8px;
+}
+
+.confidence-bar-container {
   margin-bottom: 16px;
+}
+
+.confidence-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.confidence-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  transition: width 0.3s ease;
+}
+
+.confidence-bar-label {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  text-align: center;
+  color: #6b7280;
 }
 
 .crop-info {
