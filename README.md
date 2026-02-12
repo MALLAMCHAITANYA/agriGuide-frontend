@@ -109,29 +109,37 @@ frontend/
 
 ## Setup & Installation
 
+## Setup & Installation
+
 1. **Clone the repository**
-Install dependencies
+
+git clone https://github.com/<your-username>/agriGuide-frontend.git
+cd agriGuide-frontend
+
+2.Install dependencies
 npm install
 Running the App
 npm start
 Development server: http://localhost:3000
 The app will automatically reload when you change code.
 Make sure the backend API is running at http://127.0.0.1:8000 so that crop recommendations and market data work correctly.
+
 Configuration
 If needed, you can centralize API base URLs (for example, in a config file or environment variable), but by default the app expects:
 Backend API: http://127.0.0.1:8000
+
 Available Scripts
 In the project directory, you can run:
 npm start – Run the app in development mode.
 npm test – Launch the test runner.
 npm run build – Create a production build in the build/ folder.
 npm run eject – Eject CRA configuration (advanced use).
+
 Running with Backend Locally
-From the backend repo:
-uvicorn main:app --reload --host 127.0.0.1 --port 8000
-From the frontend repo:
-npm start
+From the backend repo: uvicorn main:app --reload --host 127.0.0.1 --port 8000
+From the frontend repo: npm start
 Open http://localhost:3000 in your browser.
+
 License
 This frontend is built for educational and demonstration purposes.
 You are free to extend, restyle, or integrate it into your own projects.
