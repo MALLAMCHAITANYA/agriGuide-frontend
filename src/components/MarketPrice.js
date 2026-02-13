@@ -17,10 +17,10 @@ function MarketPrice({ crop }) {
     setLoading(true);
     try {
       const [priceRes, historyRes, statsRes, trendRes] = await Promise.all([
-        fetch(`http://127.0.0.1:8000/market/price/${crop}`),
-        fetch(`http://127.0.0.1:8000/market/history/${crop}?days=30`),
-        fetch(`http://127.0.0.1:8000/market/stats/${crop}`),
-        fetch(`http://127.0.0.1:8000/market/trend/${crop}`),
+        fetch(`https://agriguide-backend-opm1.onrender.com/market/price/${crop}`),
+        fetch(`https://agriguide-backend-opm1.onrender.com/${crop}?days=30`),
+        fetch(`https://agriguide-backend-opm1.onrender.com/market/stats/${crop}`),
+        fetch(`https://agriguide-backend-opm1.onrender.com/market/trend/${crop}`),
       ]);
 
       const priceData = await priceRes.json();
@@ -29,7 +29,14 @@ function MarketPrice({ crop }) {
       const trendData = await trendRes.json();
 
       setPriceData(priceData);
-      setHistory(historyData.history);
+      // Ensure we always store an array in history to avoid `.map` on undefined
+      const safeHistory =
+        historyData && Array.isArray(historyData.history)
+          ? historyData.history
+          : Array.isArray(historyData)
+          ? historyData
+          : [];
+      setHistory(safeHistory);
       setStats(statsData);
       setTrend(trendData);
       setLoading(false);
