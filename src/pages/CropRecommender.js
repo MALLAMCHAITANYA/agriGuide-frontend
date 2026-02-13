@@ -102,20 +102,62 @@ function CropRecommender() {
           <div className="form-grid">
             <input
               type="text"
-              placeholder={t("recommender.cityPlaceholder")}
+              placeholder="City (e.g. Hyderabad)"
               value={city}
               onChange={(e) => setCity(e.target.value)}
             />
 
-            <input type="number" name="N" placeholder={t("recommender.nPlaceholder")} value={values.N} onChange={handleChange} />
-            <input type="number" name="P" placeholder={t("recommender.pPlaceholder")} value={values.P} onChange={handleChange} />
-            <input type="number" name="K" placeholder={t("recommender.kPlaceholder")} value={values.K} onChange={handleChange} />
+            <input
+              type="number"
+              name="N"
+              placeholder="Nitrogen N (0–140, avg ≈70)"
+              value={values.N}
+              onChange={handleChange}
+            />
+            <input
+              type="number"
+              name="P"
+              placeholder="Phosphorus P (5–145, avg ≈75)"
+              value={values.P}
+              onChange={handleChange}
+            />
+            <input
+              type="number"
+              name="K"
+              placeholder="Potassium K (5–205, avg ≈100)"
+              value={values.K}
+              onChange={handleChange}
+            />
 
-            <input type="number" name="temperature" placeholder={t("recommender.tempPlaceholder")} value={values.temperature} onChange={handleChange} />
-            <input type="number" name="humidity" placeholder={t("recommender.humidityPlaceholder")} value={values.humidity} onChange={handleChange} />
+            <input
+              type="number"
+              name="temperature"
+              placeholder="Temperature °C (8–43, avg ≈26)"
+              value={values.temperature}
+              onChange={handleChange}
+            />
+            <input
+              type="number"
+              name="humidity"
+              placeholder="Humidity % (14–99, avg ≈65)"
+              value={values.humidity}
+              onChange={handleChange}
+            />
 
-            <input type="number" name="ph" placeholder={t("recommender.phPlaceholder")} value={values.ph} onChange={handleChange} />
-            <input type="number" name="rainfall" placeholder={t("recommender.rainfallPlaceholder")} value={values.rainfall} onChange={handleChange} />
+            <input
+              type="number"
+              name="ph"
+              placeholder="pH (3.5–9.9, ideal ≈6.5)"
+              value={values.ph}
+              onChange={handleChange}
+            />
+            <input
+              type="number"
+              name="rainfall"
+              placeholder="Rainfall mm (20–300, avg ≈120)"
+              value={values.rainfall}
+              onChange={handleChange}
+            />
 
             <select
               value={season}
