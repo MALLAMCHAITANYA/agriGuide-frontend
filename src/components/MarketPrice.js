@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./MarketPrice.css";
 
 function MarketPrice({ crop }) {
@@ -9,11 +9,7 @@ function MarketPrice({ crop }) {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("current");
 
-  useEffect(() => {
-    fetchMarketData();
-  }, [crop]);
-
-  const fetchMarketData = async () => {
+  const fetchMarketData = useCallback(async () => {
     setLoading(true);
     try {
       const [priceRes, historyRes, statsRes, trendRes] = await Promise.all([
@@ -44,7 +40,11 @@ function MarketPrice({ crop }) {
       console.error("Error fetching market data:", error);
       setLoading(false);
     }
-  };
+  }, [crop]);
+
+  useEffect(() => {
+    fetchMarketData();
+  }, [fetchMarketData]);
 
   if (loading) {
     return (
