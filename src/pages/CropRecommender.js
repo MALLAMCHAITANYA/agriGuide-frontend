@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./CropRecommender.css";
@@ -22,6 +22,16 @@ function CropRecommender() {
   const [city, setCity] = useState("");
   const [season, setSeason] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingHint, setLoadingHint] = useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      setLoadingHint(false);
+      return;
+    }
+    const timer = setTimeout(() => setLoadingHint(true), 4000);
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -171,8 +181,20 @@ function CropRecommender() {
           </div>
 
           <button className="predict-btn" onClick={handleSubmit} disabled={loading}>
-            {loading ? <ClipLoader size={20} /> : t("recommender.predictButton")}
+            {loading ? (
+              <span className="loading-state">
+                <ClipLoader size={20} color="#fff" />
+                <span>Predicting crops...</span>
+              </span>
+            ) : (
+              t("recommender.predictButton")
+            )}
           </button>
+          {loading && loadingHint && (
+            <p className="loading-hint">
+              First request may take 30–60 seconds while the server wakes up. Please wait…
+            </p>
+          )}
         </div>
       </div>
     </div>

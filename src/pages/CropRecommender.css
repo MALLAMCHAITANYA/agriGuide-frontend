@@ -124,6 +124,20 @@
   cursor: not-allowed;
 }
 
+.loading-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.loading-hint {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: #64748b;
+  text-align: center;
+  font-style: italic;
+}
+
 /* Responsive Design */
 @media (max-width: 600px) {
   .form-grid {
