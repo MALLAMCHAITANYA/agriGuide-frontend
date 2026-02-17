@@ -38,14 +38,8 @@ function Chatbot() {
   const sendMessage = async () => {
     const trimmed = input.trim();
     if (!trimmed || loading) return;
-    if (!apiKey) {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", text: "Chatbot is not configured. Add REACT_APP_GEMINI_API_KEY to your .env file. Get a free key at https://aistudio.google.com/app/apikey" },
-      ]);
-      setInput("");
-      return;
-    }
+
+    const useApiRoute = !apiKey;
 
     const userMsg = { role: "user", text: trimmed };
     setMessages((prev) => [...prev, userMsg]);
@@ -53,32 +47,43 @@ function Chatbot() {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-        {
+      let reply;
+      if (useApiRoute) {
+        const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-            contents: [{ parts: [{ text: trimmed }] }],
-          }),
+          body: JSON.stringify({ message: trimmed }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data?.error || data?.message || "API request failed");
         }
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data?.error?.message || "API request failed");
+        reply = data.reply || "Sorry, I couldn't generate a response. Please try again.";
+      } else {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+              contents: [{ parts: [{ text: trimmed }] }],
+            }),
+          }
+        );
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data?.error?.message || "API request failed");
+        }
+        reply =
+          data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+          "Sorry, I couldn't generate a response. Please try again.";
       }
-
-      const reply =
-        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "Sorry, I couldn't generate a response. Please try again.";
       setMessages((prev) => [...prev, { role: "assistant", text: reply }]);
     } catch (err) {
       const msg =
-        err.message?.includes("API key")
-          ? "Invalid or missing API key. Check your .env file."
+        err.message?.includes("API key") || err.message?.includes("not configured")
+          ? err.message
           : err.message || "Something went wrong. Please try again.";
       setMessages((prev) => [
         ...prev,
