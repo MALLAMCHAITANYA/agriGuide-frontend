@@ -1,12 +1,55 @@
 import { useState, useRef, useEffect } from "react";
 import "./Chatbot.css";
 
-const SYSTEM_PROMPT = `You are AgriGuide's friendly farming assistant. You help users with:
-- Crop selection, soil, fertilizers (N, P, K), and climate
-- How to use this app (Crop Recommender, Results, Market Prices)
-- General agriculture doubts in India
+function FormattedText({ text }) {
+  const parts = [];
+  const lines = text.split("\n");
+  let listItems = [];
+  const flushList = () => {
+    if (listItems.length) {
+      parts.push(<ul key={parts.length} className="chat-list">{listItems}</ul>);
+      listItems = [];
+    }
+  };
+  lines.forEach((line, i) => {
+    const trimmed = line.trim();
+    if (/^[-•*]/.test(trimmed)) {
+      const content = trimmed.replace(/^[-•*]\s*/, "");
+      listItems.push(<li key={listItems.length}>{formatBold(content)}</li>);
+    } else if (trimmed) {
+      flushList();
+      parts.push(<p key={parts.length} className="chat-paragraph">{formatBold(line)}</p>);
+    } else {
+      flushList();
+      parts.push(<br key={parts.length} />);
+    }
+  });
+  flushList();
+  return <div className="chat-formatted">{parts}</div>;
+}
 
-Keep answers concise, practical, and helpful. If you don't know something, say so. Use simple language.`;
+function formatBold(str) {
+  const re = /\*\*(.+?)\*\*/g;
+  const result = [];
+  let lastIndex = 0;
+  let match;
+  let key = 0;
+  while ((match = re.exec(str)) !== null) {
+    result.push(str.slice(lastIndex, match.index));
+    result.push(<strong key={key++}>{match[1]}</strong>);
+    lastIndex = match.index + match[0].length;
+  }
+  result.push(str.slice(lastIndex));
+  return result;
+}
+
+const SYSTEM_PROMPT = `You are AgriGuide's friendly farming assistant. Format your responses clearly using:
+- **Bold** for important terms
+- Bullet points (• or -) for lists
+- Short paragraphs (2–3 lines max)
+- Clean structure: no long walls of text
+
+Help users with: crop selection, soil, fertilizers (N, P, K), climate, and how to use this app. Keep answers concise and practical. Use simple language.`;
 
 function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -123,7 +166,13 @@ function Chatbot() {
         <div className="chatbot-messages">
           {messages.map((m, i) => (
             <div key={i} className={`chat-message ${m.role}`}>
-              <span className="chat-bubble">{m.text}</span>
+              <span className="chat-bubble">
+                {m.role === "assistant" ? (
+                  <FormattedText text={m.text} />
+                ) : (
+                  m.text
+                )}
+              </span>
             </div>
           ))}
           {loading && (

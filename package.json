@@ -13,9 +13,11 @@
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "react-i18next": "^16.5.4",
+    "react-markdown": "^8.0.7",
     "react-router-dom": "^7.11.0",
     "react-scripts": "5.0.1",
     "react-spinners": "^0.17.0",
+    "remark-gfm": "^3.0.1",
     "sweetalert2": "^11.26.3",
     "web-vitals": "^2.1.4"
   },
