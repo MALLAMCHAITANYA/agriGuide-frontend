@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { apiUrl, fetchWithTimeout } from "../config/api";
 import "./MarketPrice.css";
 
 function MarketPrice({ crop }) {
@@ -12,33 +13,53 @@ function MarketPrice({ crop }) {
   const fetchMarketData = useCallback(async () => {
     setLoading(true);
     try {
-      const [priceRes, historyRes, statsRes, trendRes] = await Promise.all([
-        fetch(`https://agriguide-backend-opm1.onrender.com/market/price/${crop}`),
-        fetch(`https://agriguide-backend-opm1.onrender.com/${crop}?days=30`),
-        fetch(`https://agriguide-backend-opm1.onrender.com/market/stats/${crop}`),
-        fetch(`https://agriguide-backend-opm1.onrender.com/market/trend/${crop}`),
+      const priceRes = await fetchWithTimeout(apiUrl(`/market/price/${crop}`), {}, 8000);
+      if (!priceRes.ok) {
+        throw new Error("Failed to fetch current price");
+      }
+      const currentPriceData = await priceRes.json();
+      setPriceData(currentPriceData);
+      setLoading(false);
+
+      const [historyRes, statsRes, trendRes] = await Promise.allSettled([
+        fetchWithTimeout(apiUrl(`/market/history/${crop}?days=30`), {}, 10000),
+        fetchWithTimeout(apiUrl(`/market/stats/${crop}`), {}, 10000),
+        fetchWithTimeout(apiUrl(`/market/trend/${crop}`), {}, 10000),
       ]);
 
-      const priceData = await priceRes.json();
-      const historyData = await historyRes.json();
-      const statsData = await statsRes.json();
-      const trendData = await trendRes.json();
+      if (historyRes.status === "fulfilled" && historyRes.value.ok) {
+        const historyData = await historyRes.value.json();
+        const safeHistory =
+          historyData && Array.isArray(historyData.history)
+            ? historyData.history
+            : Array.isArray(historyData)
+            ? historyData
+            : [];
+        setHistory(safeHistory);
+      } else {
+        setHistory([]);
+      }
 
-      setPriceData(priceData);
-      // Ensure we always store an array in history to avoid `.map` on undefined
-      const safeHistory =
-        historyData && Array.isArray(historyData.history)
-          ? historyData.history
-          : Array.isArray(historyData)
-          ? historyData
-          : [];
-      setHistory(safeHistory);
-      setStats(statsData);
-      setTrend(trendData);
-      setLoading(false);
+      if (statsRes.status === "fulfilled" && statsRes.value.ok) {
+        const statsData = await statsRes.value.json();
+        setStats(statsData);
+      } else {
+        setStats(null);
+      }
+
+      if (trendRes.status === "fulfilled" && trendRes.value.ok) {
+        const trendData = await trendRes.value.json();
+        setTrend(trendData);
+      } else {
+        setTrend(null);
+      }
     } catch (error) {
       console.error("Error fetching market data:", error);
       setLoading(false);
+      setPriceData(null);
+      setHistory([]);
+      setStats(null);
+      setTrend(null);
     }
   }, [crop]);
 
@@ -71,9 +92,25 @@ function MarketPrice({ crop }) {
           <p className="price-label">Current Price</p>
           <p className="price-value">₹{priceData?.current_price?.toFixed(2)}</p>
           <p className="price-unit">per quintal</p>
-          <p className={`price-change ${priceData?.variation > 0 ? "up" : "down"}`}>
-            {priceData?.variation > 0 ? "📈" : "📉"} {priceData?.variation}%
+          <p
+            className={`price-change ${
+              priceData?.variation > 0 ? "up" : priceData?.variation < 0 ? "down" : ""
+            }`}
+          >
+            {priceData?.variation > 0 ? "📈" : priceData?.variation < 0 ? "📉" : "➡️"}{" "}
+            {priceData?.variation}%
           </p>
+          {priceData?.source && (
+            <p className="price-unit">Source: {priceData.source}</p>
+          )}
+          {priceData?.market && priceData?.district && priceData?.state && (
+            <p className="price-unit">
+              {priceData.market}, {priceData.district}, {priceData.state}
+            </p>
+          )}
+          {priceData?.last_updated && (
+            <p className="price-unit">Updated: {priceData.last_updated}</p>
+          )}
         </div>
 
         {stats && (
@@ -121,7 +158,9 @@ function MarketPrice({ crop }) {
               const height = ((item.price - minPrice) / range) * 200 + 20;
               return (
                 <div key={index} className="chart-bar" title={`${item.date}: ₹${item.price}`}>
-                  <div className="bar" style={{ height: `${height}px` }}></div>
+                  <div className="bar" style={{ height: `${height}px` }}>
+                    <span className="bar-tooltip">₹{item.price}</span>
+                  </div>
                   {index % 5 === 0 && (
                     <span className="chart-date">{item.date.slice(5)}</span>
                   )}

@@ -10,6 +10,7 @@ const resources = {
         home: "Home",
         recommender: "Crop Recommender",
         results: "Results",
+        about: "About",
         languageLabel: "Language"
       },
       landing: {
@@ -90,6 +91,7 @@ const resources = {
         home: "होम",
         recommender: "फ़सल सुझाव",
         results: "परिणाम",
+        about: "परिचय",
         languageLabel: "भाषा"
       },
       landing: {
@@ -170,6 +172,7 @@ const resources = {
         home: "హోమ్",
         recommender: "పంట సూచిక",
         results: "ఫలితాలు",
+        about: "గురించి",
         languageLabel: "భాష"
       },
       landing: {

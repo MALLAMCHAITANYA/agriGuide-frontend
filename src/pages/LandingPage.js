@@ -1,12 +1,19 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import "./LandingPage.css";
 
 function LandingPage() {
   const navigate = useNavigate();
   const [hoveredFeature, setHoveredFeature] = useState(null);
   const { t } = useTranslation();
+
+  const handleDiscoverMore = () => {
+    const featuresSection = document.getElementById("features-section");
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   const features = [
     {
@@ -69,7 +76,18 @@ function LandingPage() {
           </div>
 
           {/* Scroll Indicator */}
-          <div className="scroll-indicator">
+          <div
+            className="scroll-indicator"
+            onClick={handleDiscoverMore}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                handleDiscoverMore();
+              }
+            }}
+          >
             <span className="scroll-text">{t("landing.scrollMore")}</span>
             <span className="scroll-arrow">↓</span>
           </div>
@@ -77,7 +95,7 @@ function LandingPage() {
       </div>
 
       {/* Features Section */}
-      <div className="features-section">
+      <div id="features-section" className="features-section">
         <h2 className="features-title">{t("landing.featuresTitle")}</h2>
         <div className="features-grid">
           {features.map((feature, index) => (

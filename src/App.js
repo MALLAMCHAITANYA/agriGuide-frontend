@@ -1,9 +1,11 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import { Route, Routes } from "react-router-dom";
 import Chatbot from "./components/Chatbot";
-import LandingPage from "./pages/LandingPage";
+
+import MarketDashboard from "./components/MarketDashboard";
+import Navbar from "./components/Navbar";
+import AboutPage from "./pages/AboutPage";
 import CropRecommender from "./pages/CropRecommender";
+import LandingPage from "./pages/LandingPage";
 import ResultsPage from "./pages/ResultsPage";
 
 export default function App() {
@@ -14,6 +16,9 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/crop-recommender" element={<CropRecommender />} />
         <Route path="/results" element={<ResultsPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/market" element={<MarketDashboard />} />
+
       </Routes>
       <Chatbot />
     </>

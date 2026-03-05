@@ -1,6 +1,5 @@
-import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
 function Navbar() {
@@ -11,6 +10,9 @@ function Navbar() {
   const isHome = location.pathname === "/";
   const isRecommender = location.pathname === "/crop-recommender";
   const isResults = location.pathname === "/results";
+  const isAbout = location.pathname === "/about";
+  const isMarket = location.pathname === "/market";
+
 
   return (
     <nav className="navbar">
@@ -35,10 +37,23 @@ function Navbar() {
             {t("navbar.recommender")}
           </button>
           <button
+            className={`nav-link ${isMarket ? "active" : ""}`}
+            onClick={() => navigate("/market")}
+          >
+            💹 Market Prices
+          </button>
+
+          <button
             className={`nav-link ${isResults ? "active" : ""}`}
             onClick={() => navigate("/results")}
           >
             {t("navbar.results")}
+          </button>
+          <button
+            className={`nav-link ${isAbout ? "active" : ""}`}
+            onClick={() => navigate("/about")}
+          >
+            {t("navbar.about")}
           </button>
 
           <div className="nav-lang-select">

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import "./CropRecommender.css";
-import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
+import Swal from "sweetalert2";
+import { apiUrl, fetchWithTimeout } from "../config/api";
+import "./CropRecommender.css";
 
 function CropRecommender() {
   const navigate = useNavigate();
@@ -33,6 +34,10 @@ function CropRecommender() {
     return () => clearTimeout(timer);
   }, [loading]);
 
+  useEffect(() => {
+    fetch(apiUrl("/"), { method: "GET" }).catch(() => {});
+  }, []);
+
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
@@ -50,7 +55,7 @@ function CropRecommender() {
     setLoading(true);
 
     try {
-      const response = await fetch("https://agriguide-backend-opm1.onrender.com/predict", {
+      const response = await fetchWithTimeout(apiUrl("/predict"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -62,7 +67,11 @@ function CropRecommender() {
           ph: Number(values.ph),
           rainfall: Number(values.rainfall),
         }),
-      });
+      }, 15000);
+
+      if (!response.ok) {
+        throw new Error("Prediction request failed");
+      }
 
       const data = await response.json();
 
