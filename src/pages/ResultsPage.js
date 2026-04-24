@@ -8,7 +8,6 @@ import cropData from "../data/cropData";
 import "./ResultsPage.css";
 
 function ResultsPage() {
-  const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { recommendationData, updateRecommendationData } = useCrop();
@@ -21,20 +20,6 @@ function ResultsPage() {
   const [city, setCity] = useState(initialCity);
   const [selectedRegion, setSelectedRegion] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const matchesSeason = (seasonText, filter) => {
-    if (!filter || filter === "all") return true;
-    if (!seasonText) return false;
-
-    const s = seasonText.toLowerCase();
-    if (filter === "kharif") {
-      return s.includes("kharif") || s.includes("monsoon") || s.includes("june");
-    }
-    if (filter === "rabi") {
-      return s.includes("rabi") || s.includes("winter") || s.includes("nov");
-    }
-    return true;
-  };
 
   const filteredRecommendations = recommendations; // Season filtering removed from logic as season field was removed
 

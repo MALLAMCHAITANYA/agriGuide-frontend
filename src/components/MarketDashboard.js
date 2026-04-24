@@ -1,7 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { apiUrl, fetchWithTimeout } from "../config/api";
 import "./MarketDashboard.css";
+
+const CROPS_LIST = [
+  "rice", "wheat", "maize", "cotton", "jute", "coffee", "banana", "mango",
+  "potato", "onion", "tomato", "mustard", "soybean", "sugarcane", "garlic", "turmeric", "ginger",
+  "pomegranate", "grapes", "apple", "orange", "papaya"
+];
 
 function MarketDashboard() {
   const [marketData, setMarketData] = useState({});
@@ -9,12 +15,6 @@ function MarketDashboard() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const { t } = useTranslation();
-
-  const crops = [
-    "rice", "wheat", "maize", "cotton", "jute", "coffee", "banana", "mango",
-    "potato", "onion", "tomato", "mustard", "soybean", "sugarcane", "garlic", "turmeric", "ginger",
-    "pomegranate", "grapes", "apple", "orange", "papaya"
-  ];
 
   const getDemandLevel = (price, avgPrice) => {
     if (!avgPrice) return "Moderate";
@@ -37,13 +37,13 @@ function MarketDashboard() {
     return "Stable";
   };
 
-  const fetchAllMarketData = async () => {
+  const fetchAllMarketData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
       const results = await Promise.all(
-        crops.map(async (crop) => {
+        CROPS_LIST.map(async (crop) => {
           try {
             const priceRes = await fetchWithTimeout(apiUrl(`/market/price/${crop}`), {}, 8000);
             if (!priceRes.ok) return null;
@@ -84,13 +84,13 @@ function MarketDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
 
   useEffect(() => {
     fetchAllMarketData();
     const interval = setInterval(fetchAllMarketData, 5 * 60 * 1000); // Refresh every 5 minutes
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchAllMarketData]);
 
   const filteredCrops = useMemo(() => {
     return Object.entries(marketData).filter(([cropName]) =>
