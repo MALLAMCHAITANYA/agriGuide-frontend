@@ -1,149 +1,77 @@
-**Frontend `README.md`**
+# 🌱 AgriGuide - Frontend 
 
-# agriGuide Frontend (React)
-
-The **agriGuide Frontend** is a React single‑page application that provides an intuitive UI for AI‑driven crop recommendations, comparison, and basic market insights for farmers.
+Welcome to the **AgriGuide Frontend**—the visual and interactive gateway for farmers to access AI-driven agricultural insights. This project combines state-of-the-art web design with practical, data-backed utility to help optimize farm productivity.
 
 ---
 
-## Features
+## ✨ Key Features & User Experience
 
-- **Landing Page**
-  - Introduces the agriGuide concept: AI‑powered, data‑driven farming.
-  - Call‑to‑action to start the crop recommendation flow.
-
-- **Crop Recommender Form**
-  - Inputs:
-    - City (optional, for context)
-    - N, P, K values
-    - Temperature, Humidity
-    - Soil pH
-    - Rainfall (mm)
-  - Optional **Season filter**:
-    - Kharif (Monsoon)
-    - Rabi (Winter)
-    - All seasons
-
-- **Results Page**
-  - Shows **top recommended crops** returned by the backend.
-  - Each crop uses a detailed **CropCard** with:
-    - Soil type
-    - Duration
-    - Water need
-    - Cost per acre
-    - Recommended temperature, humidity, rainfall
-    - pH range
-    - Fertilizer suggestions
-    - Common diseases & control
-    - Top Indian states
-    - Best season
-  - **Confidence / Suitability bar**:
-    - Visual progress bar based on model probability.
-    - Caption: “Higher bar = better match for your soil & climate”.
-
-  - **Comparison section**:
-    - Side‑by‑side comparison table for the recommended crops.
-    - Factors: duration, water need, cost/acre, best season, top states.
-
-  - **Filtering**
-    - Season filter (from the form) is displayed and applied.
-    - **Region filter** – dropdown of top states extracted from crop data.
-
-  - **Market Price section**
-    - Uses backend `/market` APIs to show current price and related info
-      for the top crop.
-
-- **Extra interactions**
-  - Text‑to‑speech: button to read crop details aloud.
-  - Download crop report as **PDF**.
-  - Download crop card as **image**.
+*   **🤖 Smart AI Assistant**: A prominent, friendly assistant that provides instant guidance and domain-specific knowledge.
+*   **📱 Universal Responsiveness**: A high-end, mobile-first design that adapts seamlessly to desktop, tablet, and mobile screens with a dedicated drawer navigation.
+*   **🌍 Multi-Regional & Multilingual**: Supports **English, Hindi (हिन्दी), and Telugu (తెలుగు)**, making advanced technology accessible to localized farming communities.
+*   **🔄 Persistent Experience**: Integrated **Global State Management** ensures that soil inputs and crop recommendations are never lost when navigating between market prices and feature pages.
+*   **💹 Market Pulse**: Real-time market dashboards with trend analysis, price history, and forecasting for top commodities.
+*   **🎨 Premium Aesthetics**: A "Glassmorphism" design system using vibrant green gradients and balanced typography for a high-end, professional feel.
 
 ---
 
-## Tech Stack
+## 🛠️ Technical Architecture
 
-- **Framework:** React (Create React App)
-- **Routing:** `react-router-dom`
-- **Styling:** CSS (green, agriculture‑themed UI, glassmorphism cards)
-- **Charts / UI helpers:** plain CSS + components
-- **API:** Fetch calls to the FastAPI backend at `http://127.0.0.1:8000`
+This frontend is built for performance and reliability:
 
----
-
-## Project Structure
-
-frontend/
-├── public/
-│   ├── index.html
-│   └── assets/
-│       ├── background.jpeg
-│       └── crops/           # crop images (rice.jpg, maize.jpg, etc.)
-├── src/
-│   ├── App.js               # main app + routes
-│   ├── App.css
-│   ├── index.js
-│   ├── index.css
-│   ├── data/
-│   │   └── cropData.js      # detailed crop info used in cards/comparison
-│   ├── components/
-│   │   ├── Navbar.js
-│   │   ├── Navbar.css
-│   │   ├── CropCard.js
-│   │   ├── CropCard.css
-│   │   ├── MarketPrice.js
-│   │   └── MarketPrice.css
-│   └── pages/
-│       ├── LandingPage.js
-│       ├── LandingPage.css
-│       ├── CropRecommender.js
-│       ├── CropRecommender.css
-│       ├── ResultsPage.js
-│       └── ResultsPage.css
-├── package.json
-├── package-lock.json
-├── .gitignore
-└── README.md
-
+*   **Framework**: [React 18](https://reactjs.org/)
+*   **State Management**: React Context API (Global Storage)
+*   **Internationalization**: `i18next` for seamless language switching
+*   **Styling**: Custom CSS3 with advanced animations and Flexbox/Grid layouts
+*   **Icons & Multimedia**: FontAwesome, SweetAlert2, and custom-designed UI elements
 
 ---
 
-## Setup & Installation
+## 📸 Screenshots & Demo
 
-## Setup & Installation
+*(Note to User: Add your actual screenshots here after deployment)*
+- **Dashboard**: `![Dashboard Image](assets/dashboard.png)`
+- **AI Recommendation**: `![AI Feature](assets/prediction.png)`
+- **Market Price Analysis**: `![Market Data](assets/market.png)`
 
-1. **Clone the repository**
+---
 
-git clone https://github.com/<your-username>/agriGuide-frontend.git
+## 🚀 Quick Setup
+
+### 1. Installation
+Clone the repository and install dependencies:
+```bash
+git clone https://github.com/[your-username]/agriGuide-frontend.git
 cd agriGuide-frontend
-
-2.Install dependencies
 npm install
-Running the App
+```
+
+### 2. Configure Environment
+Create a `.env` file in the root directory:
+```env
+REACT_APP_API_URL=https://your-backend-url.render.com
+```
+
+### 3. Launch
+Start the development server:
+```bash
 npm start
-Development server: http://localhost:3000
-The app will automatically reload when you change code.
-Make sure the backend API is running at http://127.0.0.1:8000 so that crop recommendations and market data work correctly.
+```
 
-Configuration
-If needed, you can centralize API base URLs (for example, in a config file or environment variable), but by default the app expects:
-Backend API: http://127.0.0.1:8000
+---
 
-Available Scripts
-In the project directory, you can run:
-npm start – Run the app in development mode.
-npm test – Launch the test runner.
-npm run build – Create a production build in the build/ folder.
-npm run eject – Eject CRA configuration (advanced use).
+## 🚢 Deployment (Vercel)
 
-Running with Backend Locally
-From the backend repo: uvicorn main:app --reload --host 127.0.0.1 --port 8000
-From the frontend repo: npm start
-Open http://localhost:3000 in your browser.
+1. Connect your repository to [Vercel](https://vercel.com).
+2. Set the **Root Directory** to `frontend`.
+3. Add your `REACT_APP_API_URL` to the **Environment Variables**.
+4. Deploy and go live!
 
-License
-This frontend is built for educational and demonstration purposes.
-You are free to extend, restyle, or integrate it into your own projects.
+---
 
+## 🤝 Contribution
 
-git clone https://github.com/<your-username>/agriGuide-frontend.git
-cd agriGuide-frontend
+Contributions are welcome! If you have suggestions for new features or design improvements, feel free to open an issue or submit a pull request.
+
+---
+*Empowering agriculture through technology.* 🌾
