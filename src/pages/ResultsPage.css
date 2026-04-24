@@ -25,6 +25,78 @@
   z-index: 1;
 }
 
+/* Embedded Form on Results Page */
+.results-input-summary {
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 35px;
+}
+
+.results-input-summary .recommender-card {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.results-input-summary .form-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #065f46;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.results-form-compact {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px 18px;
+  align-items: end;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4b5563;
+  display: flex;
+  justify-content: space-between;
+  white-space: nowrap;
+}
+
+.range-badge {
+  font-size: 0.7rem;
+  background: #f3f4f6;
+  color: #6b7280;
+  padding: 0 5px;
+  border-radius: 4px;
+}
+
+.input-group input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: #fff;
+}
+
+.results-repredict-btn {
+  background: #059669 !important;
+  margin-top: 0 !important;
+  height: 38px;
+  padding: 0 20px !important;
+  font-size: 0.9rem !important;
+  white-space: nowrap;
+}
+
 .results-title {
   text-align: center;
   margin-bottom: 8px;
@@ -239,7 +311,22 @@
 /* Responsive for results page */
 @media (max-width: 768px) {
   .results-page {
-    padding: 80px 20px 30px;
+    padding: 85px 16px 30px;
+  }
+
+  .results-input-summary .recommender-card {
+    padding: 18px 16px;
+  }
+
+  .results-form-compact {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 12px;
+  }
+
+  .results-repredict-btn {
+    grid-column: span 2;
+    margin-top: 5px !important;
+    height: 44px; /* Larger tap target */
   }
   
   .results-grid {
@@ -249,6 +336,28 @@
   
   .results-title {
     font-size: 1.75rem;
+  }
+
+  .comparison-section {
+    padding: 16px 14px;
+  }
+
+  .comparison-title {
+    font-size: 1.25rem;
+  }
+
+  .comparison-row {
+    grid-template-columns: 100px repeat(3, 120px); /* Ensure readability via horizontal scroll */
+  }
+}
+
+@media (max-width: 480px) {
+  .results-form-compact {
+    grid-template-columns: 1fr;
+  }
+
+  .results-repredict-btn {
+    grid-column: span 1;
   }
 }
 /* Market Price Wrapper */

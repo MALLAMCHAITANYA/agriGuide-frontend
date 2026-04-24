@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./Chatbot.css";
 
 function FormattedText({ text }) {
@@ -52,11 +53,12 @@ const SYSTEM_PROMPT = `You are AgriGuide's friendly farming assistant. Format yo
 Help users with: crop selection, soil, fertilizers (N, P, K), climate, and how to use this app. Keep answers concise and practical. Use simple language.`;
 
 function Chatbot() {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      text: "Hi! I'm AgriGuide's assistant. Ask me anything about crops, soil, fertilizers, or how to use this app.",
+      text: t("chatbot.greeting"),
     },
   ]);
   const [input, setInput] = useState("");
@@ -101,7 +103,7 @@ function Chatbot() {
         if (!res.ok) {
           throw new Error(data?.error || data?.message || "API request failed");
         }
-        reply = data.reply || "Sorry, I couldn't generate a response. Please try again.";
+        reply = data.reply || t("alertErrorText");
       } else {
         const res = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
@@ -118,9 +120,9 @@ function Chatbot() {
         if (!res.ok) {
           throw new Error(data?.error?.message || "API request failed");
         }
-        reply =
-          data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-          "Sorry, I couldn't generate a response. Please try again.";
+          reply =
+            data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+            t("alertErrorText");
       }
       setMessages((prev) => [...prev, { role: "assistant", text: reply }]);
     } catch (err) {
@@ -153,11 +155,11 @@ function Chatbot() {
       >
         <div className="chatbot-header">
           <span className="chatbot-header-icon">🌾</span>
-          <span className="chatbot-header-title">AgriGuide Assistant</span>
+          <span className="chatbot-header-title">{t("chatbot.title")}</span>
           <button
             className="chatbot-close"
             onClick={() => setIsOpen(false)}
-            aria-label="Close chat"
+            aria-label={t("chatbot.close")}
           >
             ×
           </button>
@@ -190,7 +192,7 @@ function Chatbot() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about crops, soil, or this app..."
+            placeholder={t("chatbot.placeholder")}
             disabled={loading}
             className="chatbot-input"
             aria-label="Type your message"
@@ -199,9 +201,9 @@ function Chatbot() {
             className="chatbot-send"
             onClick={sendMessage}
             disabled={!input.trim() || loading}
-            aria-label="Send message"
+            aria-label={t("chatbot.send")}
           >
-            Send
+            {t("chatbot.send")}
           </button>
         </div>
       </div>
@@ -209,7 +211,7 @@ function Chatbot() {
       <button
         className={`chatbot-bubble ${isOpen ? "open" : ""}`}
         onClick={() => setIsOpen(!isOpen)}
-        aria-label={isOpen ? "Close chat" : "Open chat"}
+        aria-label={isOpen ? t("chatbot.close") : t("chatbot.open")}
         aria-expanded={isOpen}
       >
         <span className="chatbot-bubble-icon">💬</span>

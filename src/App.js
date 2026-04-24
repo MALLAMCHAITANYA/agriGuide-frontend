@@ -8,9 +8,11 @@ import CropRecommender from "./pages/CropRecommender";
 import LandingPage from "./pages/LandingPage";
 import ResultsPage from "./pages/ResultsPage";
 
+import { CropProvider } from "./contexts/CropContext";
+
 export default function App() {
   return (
-    <>
+    <CropProvider>
       <Navbar />
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -21,6 +23,6 @@ export default function App() {
 
       </Routes>
       <Chatbot />
-    </>
+    </CropProvider>
   );
 }

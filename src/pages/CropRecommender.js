@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useCrop } from "../contexts/CropContext";
 import ClipLoader from "react-spinners/ClipLoader";
 import Swal from "sweetalert2";
 import { apiUrl, fetchWithTimeout } from "../config/api";
@@ -9,21 +10,13 @@ import "./CropRecommender.css";
 function CropRecommender() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { recommendationData, updateRecommendationData } = useCrop();
 
-  const [values, setValues] = useState({
-    N: "",
-    P: "",
-    K: "",
-    temperature: "",
-    humidity: "",
-    ph: "",
-    rainfall: "",
-  });
-
-  const [city, setCity] = useState("");
-  const [season, setSeason] = useState("");
+  const [values, setValues] = useState(recommendationData.values);
+  const [city, setCity] = useState(recommendationData.city);
   const [loading, setLoading] = useState(false);
   const [loadingHint, setLoadingHint] = useState(false);
+  const [weatherLoading, setWeatherLoading] = useState(false);
 
   useEffect(() => {
     if (!loading) {
@@ -40,6 +33,82 @@ function CropRecommender() {
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
+  };
+
+  const handleCityBlur = async () => {
+    if (!city.trim()) return;
+    
+    setWeatherLoading(true);
+    
+    try {
+      // Get the API key from your .env file
+      const API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
+      
+      if (!API_KEY) {
+        Swal.fire({
+          title: "API Key Missing",
+          text: "Please add your OpenWeatherMap API key to .env file as REACT_APP_WEATHER_API_KEY",
+          icon: "error",
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 4000
+        });
+        setWeatherLoading(false);
+        return;
+      }
+
+      const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`;
+      const weatherRes = await fetch(weatherUrl);
+      const weatherData = await weatherRes.json();
+      
+      if (weatherData.cod !== 200) {
+        Swal.fire({
+          title: "City not found",
+          text: weatherData.message || "Could not find weather data for this city.",
+          icon: "warning",
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+        });
+        setWeatherLoading(false);
+        return;
+      }
+      
+      setCity(weatherData.name);
+      
+      // OpenWeatherMap only provides rain data if it's currently raining (in mm/h)
+      // Otherwise, it doesn't include the 'rain' object.
+      let currentRain = 0;
+      if (weatherData.rain) {
+        currentRain = weatherData.rain['1h'] || weatherData.rain['3h'] || 0;
+      }
+      
+      setValues(prev => ({
+        ...prev,
+        temperature: weatherData.main.temp,
+        humidity: weatherData.main.humidity,
+        // We only overwrite rainfall if it's actually raining, because agricultural
+        // ML models usually expect average seasonal rainfall, not momentary rain.
+        rainfall: currentRain !== 0 ? currentRain : prev.rainfall
+      }));
+      
+      Swal.fire({
+        title: "Weather Updated!",
+        text: `Fetched real-time weather from OpenWeatherMap for ${weatherData.name}`,
+        icon: "success",
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+      });
+      
+    } catch (error) {
+      console.error("Error fetching weather:", error);
+    } finally {
+      setWeatherLoading(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -75,12 +144,13 @@ function CropRecommender() {
 
       const data = await response.json();
 
-      navigate("/results", {
-        state: {
-          recommendations: data.recommendations,
-          selectedSeason: season,
-        },
+      updateRecommendationData({
+        recommendations: data.recommendations,
+        values: values,
+        city: city
       });
+
+      navigate("/results");
     } catch {
       Swal.fire(
         t("recommender.alertErrorTitle"),
@@ -119,81 +189,111 @@ function CropRecommender() {
           </p>
 
           <div className="form-grid">
-            <input
-              type="text"
-              placeholder="City (e.g. Hyderabad)"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            />
+            <div className="input-group">
+              <label>🌆 {t("recommender.cityPlaceholder").replace('🌆', '').trim()}</label>
+              <div className="city-input-container">
+                <input
+                  type="text"
+                  autoComplete="off"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  onBlur={handleCityBlur}
+                />
+                {weatherLoading && (
+                  <span className="weather-spinner">
+                    <ClipLoader size={16} color="#16a34a" />
+                  </span>
+                )}
+              </div>
+            </div>
 
-            <input
-              type="number"
-              name="N"
-              placeholder="Nitrogen N (0–140, avg ≈70)"
-              value={values.N}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="P"
-              placeholder="Phosphorus P (5–145, avg ≈75)"
-              value={values.P}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="K"
-              placeholder="Potassium K (5–205, avg ≈100)"
-              value={values.K}
-              onChange={handleChange}
-            />
+            <div className="input-group">
+              <label>🌿 Nitrogen (N) <span className="range-badge">0-140</span></label>
+              <input
+                type="number"
+                name="N"
+                value={values.N}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-            <input
-              type="number"
-              name="temperature"
-              placeholder="Temperature °C (8–43, avg ≈26)"
-              value={values.temperature}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="humidity"
-              placeholder="Humidity % (14–99, avg ≈65)"
-              value={values.humidity}
-              onChange={handleChange}
-            />
+            <div className="input-group">
+              <label>🧪 Phosphorus (P) <span className="range-badge">5-145</span></label>
+              <input
+                type="number"
+                name="P"
+                value={values.P}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-            <input
-              type="number"
-              name="ph"
-              placeholder="pH (3.5–9.9, ideal ≈6.5)"
-              value={values.ph}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="rainfall"
-              placeholder="Rainfall mm (20–300, avg ≈120)"
-              value={values.rainfall}
-              onChange={handleChange}
-            />
+            <div className="input-group">
+              <label>🧂 Potassium (K) <span className="range-badge">5-205</span></label>
+              <input
+                type="number"
+                name="K"
+                value={values.K}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-            <select
-              value={season}
-              onChange={(e) => setSeason(e.target.value)}
-            >
-              <option value="">{t("recommender.seasonLabel")}</option>
-              <option value="kharif">{t("recommender.seasonKharif")}</option>
-              <option value="rabi">{t("recommender.seasonRabi")}</option>
-              <option value="all">{t("recommender.seasonAll")}</option>
-            </select>
+            <div className="input-group">
+              <label>🌡 Temperature <span className="range-badge">8.8-43.7°C</span></label>
+              <input
+                type="number"
+                name="temperature"
+                step="0.01"
+                value={values.temperature}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <label>💧 Humidity <span className="range-badge">14.3-100%</span></label>
+              <input
+                type="number"
+                name="humidity"
+                step="0.01"
+                value={values.humidity}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <label>⚗️ pH Value <span className="range-badge">3.5-9.9</span></label>
+              <input
+                type="number"
+                name="ph"
+                step="0.01"
+                value={values.ph}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <label>🌧 Rainfall <span className="range-badge">20.2-298.6mm</span></label>
+              <input
+                type="number"
+                name="rainfall"
+                step="0.01"
+                value={values.rainfall}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
 
           <button className="predict-btn" onClick={handleSubmit} disabled={loading}>
             {loading ? (
               <span className="loading-state">
                 <ClipLoader size={20} color="#fff" />
-                <span>Predicting crops...</span>
+                <span>{t("recommender.loadingPredicting")}</span>
               </span>
             ) : (
               t("recommender.predictButton")

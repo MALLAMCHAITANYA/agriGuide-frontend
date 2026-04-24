@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { apiUrl, fetchWithTimeout } from "../config/api";
 import "./MarketDashboard.css";
 
@@ -7,6 +8,7 @@ function MarketDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const { t } = useTranslation();
 
   const crops = [
     "rice", "wheat", "maize", "cotton", "jute", "coffee", "banana", "mango",
@@ -101,7 +103,7 @@ function MarketDashboard() {
       <div className="market-dashboard-container">
         <div className="loading-state">
            <div className="loader"></div>
-           <p>📊 Analyzing Live Commodity Data...</p>
+           <p>📊 {t("market.loading")}</p>
         </div>
       </div>
     );
@@ -112,8 +114,8 @@ function MarketDashboard() {
       <div className="market-dashboard-container">
         <div className="error-state">
           <span>❌</span>
-          <p>{error}</p>
-          <button onClick={fetchAllMarketData}>Try Again</button>
+           <p>{t(error)}</p>
+           <button onClick={fetchAllMarketData}>{t("market.tryAgain")}</button>
         </div>
       </div>
     );
@@ -123,8 +125,8 @@ function MarketDashboard() {
     <div className="market-dashboard-container">
       <div className="dashboard-header">
         <div className="header-content">
-          <h2>🌾 Live Commodity Market</h2>
-          <p>Real-time data and trends for major crops in India</p>
+           <h2>🌾 {t("market.title")}</h2>
+           <p>{t("market.subtitle")}</p>
         </div>
         
         <div className="header-actions">
@@ -132,13 +134,13 @@ function MarketDashboard() {
             <span className="search-icon">🔍</span>
             <input 
               type="text" 
-              placeholder="Search crops..." 
+              placeholder={t("market.searchPlaceholder")} 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <button className="refresh-dashboard-btn" onClick={fetchAllMarketData}>
-            🔄 Refresh
+             {t("market.refresh")}
           </button>
         </div>
       </div>
@@ -150,16 +152,16 @@ function MarketDashboard() {
               <div className="card-top">
                 <div className="crop-badge">{cropName.toUpperCase()}</div>
                 <span className={`source-status ${data.source === "data.gov.in" ? "live" : "msp"}`}>
-                  {data.source === "data.gov.in" ? "🟢 LIVE" : "📊 MSP"}
+                   {data.source === "data.gov.in" ? `🟢 ${t("market.live")}` : `📊 ${t("market.msp")}`}
                 </span>
               </div>
 
               <div className="card-price-section">
-                <span className="price-label">Current Market Price</span>
+                 <span className="price-label">{t("market.currentMarketPrice")}</span>
                 <div className="price-main">
                   <span className="currency">₹</span>
                   <span className="amount">{data.current_price?.toLocaleString('en-IN')}</span>
-                  <span className="unit">/qtl</span>
+                   <span className="unit">{t("market.unit")}</span>
                 </div>
                 {data.variation !== undefined && (
                   <div className={`price-variation ${data.variation >= 0 ? "positive" : "negative"}`}>
@@ -170,7 +172,7 @@ function MarketDashboard() {
 
               <div className="card-metrics">
                 <div className="metric-box">
-                  <span className="metric-label">Trend</span>
+                   <span className="metric-label">{t("market.trend")}</span>
                   <span className={`metric-value trend-${data.trend.toLowerCase()}`}>
                     {data.trend === "Rising" && "📈"}
                     {data.trend === "Falling" && "📉"}
@@ -179,7 +181,7 @@ function MarketDashboard() {
                   </span>
                 </div>
                 <div className="metric-box">
-                  <span className="metric-label">Demand</span>
+                   <span className="metric-label">{t("market.demand")}</span>
                   <span className="metric-value demand-high">{data.demand}</span>
                 </div>
               </div>
@@ -193,17 +195,17 @@ function MarketDashboard() {
 
               <div className="card-footer">
                 <span className="last-updated">
-                   Update: {data.last_updated || "Today"}
+                    {t("market.update")}: {data.last_updated || "Today"}
                 </span>
                 <span className="data-source">
-                   via {data.source}
+                    {t("market.via")} {data.source}
                 </span>
               </div>
             </div>
           ))
         ) : (
           <div className="no-results">
-            <p>No crops found matching "{searchTerm}"</p>
+             <p>{t("market.noResults", { searchTerm })}</p>
           </div>
         )}
       </div>

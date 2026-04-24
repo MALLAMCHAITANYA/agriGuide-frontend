@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { apiUrl, fetchWithTimeout } from "../config/api";
 import "./MarketPrice.css";
 
@@ -9,6 +10,7 @@ function MarketPrice({ crop }) {
   const [trend, setTrend] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("current");
+  const { t } = useTranslation();
 
   const fetchMarketData = useCallback(async () => {
     setLoading(true);
@@ -70,7 +72,7 @@ function MarketPrice({ crop }) {
   if (loading) {
     return (
       <div className="market-price-container">
-        <div className="loading">📊 Loading market data...</div>
+        <div className="loading">📊 {t("priceChart.loading")}</div>
       </div>
     );
   }
@@ -83,15 +85,15 @@ function MarketPrice({ crop }) {
   return (
     <div className="market-price-container">
       <h2 className="market-title">
-        💹 Market Price - {crop.toUpperCase()}
+        💹 {t("priceChart.title", { crop: crop.toUpperCase() })}
       </h2>
 
       {/* Current Price Section */}
       <div className="current-price-section">
         <div className="price-card current-price-card">
-          <p className="price-label">Current Price</p>
+          <p className="price-label">{t("priceChart.currentPrice")}</p>
           <p className="price-value">₹{priceData?.current_price?.toFixed(2)}</p>
-          <p className="price-unit">per quintal</p>
+          <p className="price-unit">{t("priceChart.unitPerQuintal")}</p>
           <p
             className={`price-change ${
               priceData?.variation > 0 ? "up" : priceData?.variation < 0 ? "down" : ""
@@ -101,7 +103,7 @@ function MarketPrice({ crop }) {
             {priceData?.variation}%
           </p>
           {priceData?.source && (
-            <p className="price-unit">Source: {priceData.source}</p>
+            <p className="price-unit">{t("priceChart.source")}: {priceData.source}</p>
           )}
           {priceData?.market && priceData?.district && priceData?.state && (
             <p className="price-unit">
@@ -109,24 +111,24 @@ function MarketPrice({ crop }) {
             </p>
           )}
           {priceData?.last_updated && (
-            <p className="price-unit">Updated: {priceData.last_updated}</p>
+            <p className="price-unit">{t("priceChart.updated")}: {priceData.last_updated}</p>
           )}
         </div>
 
         {stats && (
           <>
             <div className="price-card stats-card">
-              <p className="stat-label">Highest Price</p>
+              <p className="stat-label">{t("priceChart.highestPrice")}</p>
               <p className="stat-value">₹{stats.max_price}</p>
             </div>
 
             <div className="price-card stats-card">
-              <p className="stat-label">Lowest Price</p>
+              <p className="stat-label">{t("priceChart.lowestPrice")}</p>
               <p className="stat-value">₹{stats.min_price}</p>
             </div>
 
             <div className="price-card stats-card">
-              <p className="stat-label">Average Price</p>
+              <p className="stat-label">{t("priceChart.averagePrice")}</p>
               <p className="stat-value">₹{stats.avg_price}</p>
             </div>
           </>
@@ -139,27 +141,27 @@ function MarketPrice({ crop }) {
           className={`tab-btn ${activeTab === "current" ? "active" : ""}`}
           onClick={() => setActiveTab("current")}
         >
-          📊 Price Chart
+          📊 {t("priceChart.tabChart")}
         </button>
         <button
           className={`tab-btn ${activeTab === "trend" ? "active" : ""}`}
           onClick={() => setActiveTab("trend")}
         >
-          📈 Market Trend
+          📈 {t("priceChart.tabTrend")}
         </button>
       </div>
 
       {/* Price Chart */}
       {activeTab === "current" && history.length > 0 && (
         <div className="price-chart-section">
-          <h3>📉 30-Day Price History</h3>
+          <h3>📉 {t("priceChart.historyTitle")}</h3>
           <div className="simple-chart">
             {history.map((item, index) => {
               const height = ((item.price - minPrice) / range) * 200 + 20;
               return (
                 <div key={index} className="chart-bar" title={`${item.date}: ₹${item.price}`}>
                   <div className="bar" style={{ height: `${height}px` }}>
-                    <span className="bar-tooltip">₹{item.price}</span>
+                    <span className="bar-tooltip">{t("priceChart.barTooltip", { price: item.price })}</span>
                   </div>
                   {index % 5 === 0 && (
                     <span className="chart-date">{item.date.slice(5)}</span>
@@ -168,7 +170,7 @@ function MarketPrice({ crop }) {
               );
             })}
           </div>
-          <p className="chart-note">Each bar represents daily price</p>
+          <p className="chart-note">{t("priceChart.chartNote")}</p>
         </div>
       )}
 
@@ -178,25 +180,25 @@ function MarketPrice({ crop }) {
           <div className="trend-card">
             <h3>{trend.trend}</h3>
             <p>
-              <strong>Change:</strong> {trend.change_percent}%
+              <strong>{t("marketTrend.change")}:</strong> {trend.change_percent}%
             </p>
             <p>
-              <strong>Forecast:</strong> {trend.forecast}
+              <strong>{t("marketTrend.forecast")}:</strong> {trend.forecast}
             </p>
             <div className="trend-advice">
               {trend.trend.includes("Rising") && (
                 <p className="advice-good">
-                  ✅ Good time to sell your produce at higher prices
+                  ✅ {t("marketTrend.adviceGood")}
                 </p>
               )}
               {trend.trend.includes("Falling") && (
                 <p className="advice-caution">
-                  ⚠️ Prices are falling, consider storing for better prices
+                  ⚠️ {t("marketTrend.adviceCaution")}
                 </p>
               )}
               {trend.trend.includes("Stable") && (
                 <p className="advice-neutral">
-                  ➡️ Prices are stable, market is balanced
+                  ➡️ {t("marketTrend.adviceNeutral")}
                 </p>
               )}
             </div>
@@ -206,7 +208,7 @@ function MarketPrice({ crop }) {
 
       {/* Refresh Button */}
       <button className="refresh-btn" onClick={fetchMarketData}>
-        🔄 Refresh Prices
+        🔄 {t("priceChart.refresh")}
       </button>
     </div>
   );

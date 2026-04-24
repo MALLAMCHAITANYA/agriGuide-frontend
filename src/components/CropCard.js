@@ -1,9 +1,9 @@
-import React, { useRef, useState } from "react";
-import "./CropCard.css";
-import cropData from "../data/cropData";
 import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import cropData from "../data/cropData";
+import "./CropCard.css";
 
 function CropCard({ crop, rank, confidence }) {
   const cropInfo = cropData[crop];
@@ -107,7 +107,7 @@ function CropCard({ crop, rank, confidence }) {
 
       {/* 🏅 Rank Badge */}
       <div className={`rank-badge rank-${rank}`}>
-        🏅 Rank {rank}
+        🏅 {t("cropCard.rank")} {rank}
       </div>
 
       {/* 🌱 Crop Title */}
@@ -133,28 +133,28 @@ function CropCard({ crop, rank, confidence }) {
 
       {/* 📋 Crop Details */}
       <div className="crop-info">
-        <p><span>📍 Soil:</span> {cropInfo.soil}</p>
-        <p><span>⏱ Duration:</span> {cropInfo.duration}</p>
-        <p><span>💦 Water Need:</span> {cropInfo.water}</p>
-        <p><span>💰 Cost per Acre:</span> {cropInfo.cost}</p>
-        <p><span>🌡️ Temperature:</span> {cropInfo.temperature}°C</p>
-        <p><span>💧 Humidity:</span> {cropInfo.humidity}%</p>
-        <p><span>🌦 Rainfall:</span> {cropInfo.rainfall} mm</p>
-        <p><span>🧪 pH:</span> {cropInfo.ph}</p>
-        <p><span>🌱 Fertilizers:</span> {cropInfo.fertilizers}</p>
-        <p><span>🦠 Disease:</span> {cropInfo.disease}</p>
-        <p><span>🛡 Control:</span> {cropInfo.disease_control}</p>
-        <p><span>📘 Top States:</span> {cropInfo.top_states}</p>
-        <p><span>🗓 Season:</span> {cropInfo.season}</p>
+        <p><span>📍 {t("cropCard.labels.soil")}:</span> {cropInfo.soil}</p>
+        <p><span>⏱ {t("cropCard.labels.duration")}:</span> {cropInfo.duration}</p>
+        <p><span>💦 {t("cropCard.labels.water")}:</span> {cropInfo.water}</p>
+        <p><span>💰 {t("cropCard.labels.cost")}:</span> {cropInfo.cost}</p>
+        <p><span>🌡️ {t("cropCard.labels.temp")}:</span> {cropInfo.temperature}°C</p>
+        <p><span>💧 {t("cropCard.labels.humidity")}:</span> {cropInfo.humidity}%</p>
+        <p><span>🌦 {t("cropCard.labels.rainfall")}:</span> {cropInfo.rainfall} mm</p>
+        <p><span>🧪 {t("cropCard.labels.ph")}:</span> {cropInfo.ph}</p>
+        <p><span>🌱 {t("cropCard.labels.fertilizers")}:</span> {cropInfo.fertilizers}</p>
+        <p><span>🦠 {t("cropCard.labels.disease")}:</span> {cropInfo.disease}</p>
+        <p><span>🛡 {t("cropCard.labels.control")}:</span> {cropInfo.disease_control}</p>
+        <p><span>📘 {t("cropCard.labels.topStates")}:</span> {cropInfo.top_states}</p>
+        <p><span>🗓 {t("cropCard.labels.season")}:</span> {cropInfo.season}</p>
       </div>
 
       {/* 🎯 Action Buttons */}
       <div className="action-buttons">
         <button onClick={speakInfo}>
-          {isSpeaking ? "🛑 Stop" : "🔊 Speak"}
+          {isSpeaking ? `🛑 ${t("cropCard.actions.stop")}` : `🔊 ${t("cropCard.actions.speak")}`}
         </button>
-        <button onClick={downloadPDF}>📄 PDF</button>
-        <button onClick={downloadImage}>📸 Image</button>
+        <button onClick={downloadPDF}>📄 {t("cropCard.actions.pdf")}</button>
+        <button onClick={downloadImage}>📸 {t("cropCard.actions.image")}</button>
       </div>
     </div>
   );

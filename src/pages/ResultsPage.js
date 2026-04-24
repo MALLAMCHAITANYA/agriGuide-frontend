@@ -1,19 +1,26 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useCrop } from "../contexts/CropContext";
 import CropCard from "../components/CropCard";
 import MarketPrice from "../components/MarketPrice";
 import cropData from "../data/cropData";
-import { useTranslation } from "react-i18next";
 import "./ResultsPage.css";
 
 function ResultsPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { recommendationData, updateRecommendationData } = useCrop();
 
-  const recommendations = location.state?.recommendations || [];
-  const selectedSeason = location.state?.selectedSeason || "";
+  const recommendations = recommendationData.recommendations;
+  const initialValues = recommendationData.values;
+  const initialCity = recommendationData.city;
+  
+  const [values, setValues] = useState(initialValues);
+  const [city, setCity] = useState(initialCity);
   const [selectedRegion, setSelectedRegion] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const matchesSeason = (seasonText, filter) => {
     if (!filter || filter === "all") return true;
@@ -29,14 +36,7 @@ function ResultsPage() {
     return true;
   };
 
-  const filteredRecommendations =
-    selectedSeason
-      ? recommendations.filter((item) => {
-          const key = item.crop.toLowerCase();
-          const info = cropData[key];
-          return info ? matchesSeason(info.season, selectedSeason) : true;
-        })
-      : recommendations;
+  const filteredRecommendations = recommendations; // Season filtering removed from logic as season field was removed
 
   const allStatesSet = new Set();
   (filteredRecommendations.length ? filteredRecommendations : recommendations).forEach(
@@ -107,23 +107,93 @@ function ResultsPage() {
     );
   }
 
+  const handleInputChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
+
+  const handlePredictAgain = async () => {
+    if (Object.values(values).some((v) => v === "")) return;
+    setLoading(true);
+    try {
+      const { apiUrl, fetchWithTimeout } = await import("../config/api");
+      const response = await fetchWithTimeout(apiUrl("/predict"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          N: Number(values.N),
+          P: Number(values.P),
+          K: Number(values.K),
+          temperature: Number(values.temperature),
+          humidity: Number(values.humidity),
+          ph: Number(values.ph),
+          rainfall: Number(values.rainfall),
+        }),
+      }, 15000);
+      if (response.ok) {
+        const data = await response.json();
+        updateRecommendationData({
+          recommendations: data.recommendations,
+          values: values,
+          city: city
+        });
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="results-page" style={backgroundStyle}>
+      <div className="results-input-summary">
+        <div className="recommender-card">
+          <h2 className="form-section-title">
+            Your Input Data
+          </h2>
+          <div className="form-grid results-form-compact">
+            <div className="input-group">
+              <label>City</label>
+              <input type="text" value={city} onChange={(e) => setCity(e.target.value)} />
+            </div>
+            <div className="input-group">
+              <label>Nitrogen (N) <span className="range-badge">0-140</span></label>
+              <input type="number" name="N" value={values.N} onChange={handleInputChange} />
+            </div>
+            <div className="input-group">
+              <label>Phosphorus (P) <span className="range-badge">5-145</span></label>
+              <input type="number" name="P" value={values.P} onChange={handleInputChange} />
+            </div>
+            <div className="input-group">
+              <label>Potassium (K) <span className="range-badge">5-205</span></label>
+              <input type="number" name="K" value={values.K} onChange={handleInputChange} />
+            </div>
+            <div className="input-group">
+              <label>Temperature <span className="range-badge">8.8-43.7°C</span></label>
+              <input type="number" name="temperature" value={values.temperature} onChange={handleInputChange} />
+            </div>
+            <div className="input-group">
+              <label>Humidity <span className="range-badge">14.3-100%</span></label>
+              <input type="number" name="humidity" value={values.humidity} onChange={handleInputChange} />
+            </div>
+            <div className="input-group">
+              <label>pH Value <span className="range-badge">3.5-9.9</span></label>
+              <input type="number" name="ph" value={values.ph} onChange={handleInputChange} />
+            </div>
+            <div className="input-group">
+              <label>Rainfall <span className="range-badge">20.2-298.6mm</span></label>
+              <input type="number" name="rainfall" value={values.rainfall} onChange={handleInputChange} />
+            </div>
+            <button className="predict-btn results-repredict-btn" onClick={handlePredictAgain} disabled={loading}>
+              {loading ? "..." : "Re-Predict"}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <h1 className="results-title">{t("results.title")}</h1>
       <div className="filters-row">
-        {selectedSeason && (
-          <div className="season-chip">
-            {t("results.seasonLabel")}&nbsp;
-            <span className="season-chip-value">
-              {selectedSeason === "kharif"
-                ? t("results.seasonKharif")
-                : selectedSeason === "rabi"
-                ? t("results.seasonRabi")
-                : t("results.seasonAll")}
-            </span>
-          </div>
-        )}
-
         {availableRegions.length > 0 && (
           <div className="region-filter">
             <span className="region-label">{t("results.regionLabel")}</span>
@@ -218,7 +288,7 @@ function ResultsPage() {
       </div>
 
       <button className="back-btn" onClick={() => navigate("/")}>
-        ⬅ Back to Prediction
+        {t("results.backHome")}
       </button>
     </div>
   );
