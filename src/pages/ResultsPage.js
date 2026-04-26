@@ -211,6 +211,13 @@ function ResultsPage() {
         ))}
       </div>
 
+      {/* 💹 Market Analysis for Top Recommendation */}
+      {displayRecommendations.length > 0 && (
+        <div className="market-price-wrapper">
+          <MarketPrice crop={displayRecommendations[0].crop.toLowerCase()} />
+        </div>
+      )}
+
       {/* 🔍 Comparison Section */}
       {comparisonData.length > 0 && (
         <div className="comparison-section">
