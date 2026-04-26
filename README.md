@@ -31,10 +31,10 @@ This frontend is built for performance and reliability:
 
 ## 📸 Screenshots & Demo
 
-*(Note to User: Add your actual screenshots here after deployment)*
-- **Dashboard**: `![Dashboard Image](assets/dashboard.png)`
-- **AI Recommendation**: `![AI Feature](assets/prediction.png)`
-- **Market Price Analysis**: `![Market Data](assets/market.png)`
+- **Main Dashboard**: ![Dashboard](assets/dashboard.png)
+- **AI Crop Recommender**: ![Recommender](assets/crop-recommender.png)
+- **Detailed Crop Analysis**: ![Crop Card](assets/crop-card.png)
+- **Market Price Analysis**: ![Market Dashboard](assets/market.png)
 
 ---
 
